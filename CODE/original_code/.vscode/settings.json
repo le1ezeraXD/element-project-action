@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "mod_init.h": "c",
+    "mod_oled.h": "c",
+    "mod_at24cxx.h": "c",
+    "mod_w25qxx.h": "c",
+    "sys_i2c.h": "c",
+    "drv_systick.h": "c",
+    "param.h": "c",
+    "sys_encoder.h": "c",
+    "drv_encoder.h": "c",
+    "mod_oled_font.h": "c",
+    "sys.h": "c"
+  }
+}
