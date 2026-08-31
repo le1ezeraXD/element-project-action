@@ -1,0 +1,11 @@
+*.d
+*.o
+*.crf
+# USER 只跟踪源码(.c/.h)和 Keil 工程文件(.uvprojx)，其余忽略
+CODE/original_code/USER/
+!CODE/original_code/USER/
+CODE/original_code/USER/**/*
+!CODE/original_code/USER/**/
+!CODE/original_code/USER/**/*.c
+!CODE/original_code/USER/**/*.h
+!CODE/original_code/USER/**/*.uvprojx

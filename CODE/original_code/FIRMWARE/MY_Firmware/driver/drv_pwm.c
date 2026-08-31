@@ -115,3 +115,65 @@ void drv_tim8_set_duty(uint8_t channel, uint16_t duty) {
     }
 }
 
+void pwm_init(uint8_t init_angle) {
+    //1. GPIO初始化
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;           //servo 1
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, & GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;           //servo 2
+    GPIO_Init(GPIOA, & GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;           //servo 3
+    GPIO_Init(GPIOA, & GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;           //servo 4
+    GPIO_Init(GPIOA, & GPIO_InitStructure);
+    
+    //2. 开启时钟
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    
+	// 3. 配置定时器基本参数
+    // 72MHz / 72 = 1MHz计数频率（周期1us）
+    // 20000个计数 = 20ms周期 → 50Hz
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    TIM_TimeBaseStructure.TIM_Period = 20000 - 1;
+    TIM_TimeBaseStructure.TIM_Prescaler = 72 - 1;
+    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+    
+    // 4. 配置PWM输出模式
+    TIM_OCInitTypeDef TIM_OCInitStructure;
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = init_angle;      //90°
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+    TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+    TIM_OC2Init(TIM2, &TIM_OCInitStructure);
+    TIM_OC3Init(TIM2, &TIM_OCInitStructure);
+    TIM_OC4Init(TIM2, &TIM_OCInitStructure);
+    //5. 使能定时器
+    TIM_Cmd(TIM2, ENABLE);
+}
+
+void pwm_set_compare1(uint16_t compare) {
+	TIM_SetCompare1(TIM2, compare);
+}
+
+void pwm_set_compare2(uint16_t compare) {
+	TIM_SetCompare2(TIM2, compare);
+}
+
+void pwm_set_compare3(uint16_t compare) {
+	TIM_SetCompare3(TIM2, compare);
+}
+
+void pwm_set_compare4(uint16_t compare) {
+	TIM_SetCompare4(TIM2, compare);
+}
+
+

@@ -79,6 +79,11 @@ typedef struct spi_params{
 	uint32_t data_size;
 }spi_device;
 
+typedef struct{
+    uint8_t init_angle;
+    uint16_t pulse_width_0;
+    uint16_t pulse_width_180;
+}SERVO; 
 
 //typedef struct {
 
