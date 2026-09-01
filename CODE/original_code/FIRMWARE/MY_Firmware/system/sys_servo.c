@@ -9,7 +9,7 @@ void servo_init(void) {
     pwm_init(sv.init_angle);
 }
 
-void servo_set_angle(float angle) {
+void servo_set_angle(uint8_t ch, float angle) {
     uint16_t pulse;
 
     // 角度限幅，防止超出机械范围损坏舵机
@@ -23,5 +23,5 @@ void servo_set_angle(float angle) {
 
     pulse = PULSE_WIDTH_0 + angle * (PULSE_WIDTH_180 - PULSE_WIDTH_0) / 180;
     
-    pwm_set_compare1(pulse);
+    pwm_set_compare(ch, pulse);
 }

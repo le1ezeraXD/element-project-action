@@ -119,17 +119,8 @@ void pwm_init(uint8_t init_angle) {
     //1. GPIO初始化
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;           //servo 1
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOA, & GPIO_InitStructure);
-    
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;           //servo 2
-    GPIO_Init(GPIOA, & GPIO_InitStructure);
-    
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;           //servo 3
-    GPIO_Init(GPIOA, & GPIO_InitStructure);
-    
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;           //servo 4
     GPIO_Init(GPIOA, & GPIO_InitStructure);
     
     //2. 开启时钟
@@ -152,28 +143,31 @@ void pwm_init(uint8_t init_angle) {
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = init_angle;      //90°
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
     TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
     TIM_OC2Init(TIM2, &TIM_OCInitStructure);
+	TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
     TIM_OC3Init(TIM2, &TIM_OCInitStructure);
+	TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
     TIM_OC4Init(TIM2, &TIM_OCInitStructure);
+	TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
+	TIM_ARRPreloadConfig(TIM2, ENABLE);
+	
     //5. 使能定时器
     TIM_Cmd(TIM2, ENABLE);
 }
 
-void pwm_set_compare1(uint16_t compare) {
-	TIM_SetCompare1(TIM2, compare);
+void pwm_set_compare(uint8_t ch, uint16_t compare) {
+	switch(ch) {
+		case 1: TIM_SetCompare1(TIM2, compare); break;
+		case 2: TIM_SetCompare2(TIM2, compare); break;
+		case 3: TIM_SetCompare3(TIM2, compare); break;
+		case 4: TIM_SetCompare4(TIM2, compare); break;
+		default: break;
+	}
 }
-
-void pwm_set_compare2(uint16_t compare) {
-	TIM_SetCompare2(TIM2, compare);
-}
-
-void pwm_set_compare3(uint16_t compare) {
-	TIM_SetCompare3(TIM2, compare);
-}
-
-void pwm_set_compare4(uint16_t compare) {
-	TIM_SetCompare4(TIM2, compare);
-}
-
-

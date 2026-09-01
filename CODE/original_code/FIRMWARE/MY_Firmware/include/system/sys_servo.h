@@ -7,6 +7,6 @@
 #define PULSE_WIDTH_180     2500
 
 void servo_init(void);
-void servo_set_angle(float angle);
+void servo_set_angle(uint8_t ch, float angle);
 
 #endif
