@@ -20,7 +20,7 @@
 #define MPU_6050_ADDR 0xD0
 
 i2c_device mpu6050_dev = {
-	.dev_addr_w = MPU_6050_ADDR,    				// 设备写地址
+	.dev_addr_w = MPU_6050_ADDR,    			// 设备写地址
 	.dev_addr_r = MPU_6050_ADDR | 0x01  		// 设备读地址
 };
 

@@ -80,7 +80,7 @@ uint8_t oled_init_cmd[] = {
 i2c_device oled_dev = {
 	.dev_addr_w = OLED_ADDR_WD,							//OLED地址
 	.reg_addr 	= OLED_W_COMMAND,  					//此处设置OLED_W_COMMAND是命令寄存器地址
-	.pdata			= oled_init_cmd,					  //指向初始化命令数组
+	.pdata		= oled_init_cmd,					  //指向初始化命令数组
 	.data_len   = sizeof(oled_init_cmd)  	  //初始化命令数组长度
 };
 

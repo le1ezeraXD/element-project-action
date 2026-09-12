@@ -12,8 +12,6 @@
   */
 void module_init(void) {
 	mod_oled_init();
-	// mod_w25qxx_init();
-	// mod_mpu6050_init(I2C2);
 }
 	
 
