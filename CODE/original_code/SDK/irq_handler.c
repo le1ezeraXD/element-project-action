@@ -11,6 +11,7 @@
 #include "param.h"
 
 #include "sdk_menu.h"
+#include "sdk_motion.h"
 
 
 void EXTI4_IRQHandler(void) {
@@ -42,6 +43,7 @@ void TIM4_IRQHandler(void) {
 		// 	sys_reset_encoder_count(TIM3, &g_encoder_dev);
 		// }
 		menu_encoder_process();
+		motion_tick();
 		// oled_update();
 		// sys_encoder_speed(TIM3, &g_encoder_dev);
 

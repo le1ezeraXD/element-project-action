@@ -22,6 +22,7 @@
 
 /* sdk include */
 #include "sdk_menu.h"
+#include "sdk_motion.h"
 
 /* irq_handler */
 #include "irq_handler.h"
@@ -129,6 +130,7 @@ int main(void) {
 	init_system();
 	
 	module_init();
+	sdk_motion_init();
 
 	oled_clear();
 	menu_init();
