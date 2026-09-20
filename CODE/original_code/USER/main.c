@@ -19,6 +19,7 @@
 #include "drv_systick.h"
 #include "drv_usart1.h"
 #include "drv_encoder.h"
+#include "drv_i2c.h"
 
 /* sdk include */
 #include "sdk_menu.h"
@@ -27,7 +28,7 @@
 /* irq_handler */
 #include "irq_handler.h"
 
-//全局设备变量
+// 全局设备变量
 uint8_t g_mpu6050_data_ready;
 key_state_t g_key1, g_key2, g_key3;
 tim_encoder_t g_encoder_dev;
@@ -120,8 +121,9 @@ void passthrough(void) {
 }
 
 
-int main(void) {
-	
+int main(void)
+{
+
 	uint16_t key_sta1;
 //	uint16_t key_sta2;
 //	uint16_t w25qxx_chipid = 0;
@@ -140,28 +142,27 @@ int main(void) {
 		key_sta1 = sys_key_mes_disp(&g_key1);
 //		key_sta2 = sys_key_mes_disp(&g_key2);
 
-		switch(key_sta1){
-			case KEY_DOWN:
-				led_control(GPIOB, gpio_pin_5, LED_ON);
-				menu_enter();
-				oled_update();
-				// g_encoder_dev.encoder_reset = 1;
-				break;
-			case KEY_UP:
-				led_control(GPIOB, gpio_pin_5, LED_OFF);
-				break;
-			case KEY_LONG_PRESS:
-				menu_back();
-				oled_update();
-				// led_control(GPIOB, gpio_pin_5, LED_ON);
-				// g_encoder_dev.encoder_reset = 0;
-				// TIM_Cmd(TIM3,ENABLE);
-				break;
-			default:
-				// menu_encoder_process();
-				oled_update();
-				break;
-		}
+		// switch(key_sta1){
+		// 	case KEY_DOWN:
+		// 		led_control(GPIOB, gpio_pin_5, LED_ON);
+		// 		menu_enter();
+		// 		oled_update();
+		// 		// g_encoder_dev.encoder_reset = 1;
+		// 		break;
+		// 	case KEY_UP:
+		// 		led_control(GPIOB, gpio_pin_5, LED_OFF);
+		// 		break;
+		// 	case KEY_LONG_PRESS:
+		// 		menu_back();
+		// 		oled_update();
+		// 		// led_control(GPIOB, gpio_pin_5, LED_ON);
+		// 		// g_encoder_dev.encoder_reset = 0;
+		// 		// TIM_Cmd(TIM3,ENABLE);
+		// 		break;
+		// 	default:
+		// 		// menu_encoder_process();
+		// 		oled_update();
+		// 		break;
+		// }
 	}
 }
-
