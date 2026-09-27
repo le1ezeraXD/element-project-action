@@ -27,6 +27,7 @@
 
 /* irq_handler */
 #include "irq_handler.h"
+#include "u8g2.h"
 
 // 全局设备变量
 uint8_t g_mpu6050_data_ready;
@@ -40,49 +41,56 @@ mpu6050_data_t mpu6050_data;
 extern uint8_t USART1_REC[USART1_REC_MAX];
 extern uint16_t USART1_STA;
 
-void usart1_send_data_hex(uint8_t arr[], uint16_t len) {
-	for (uint16_t i = 0; i < len; i++) {
+void usart1_send_data_hex(uint8_t arr[], uint16_t len)
+{
+	for (uint16_t i = 0; i < len; i++)
+	{
 		LOG_DEBUG("arr[%d]: 0x%x", i, arr[i]);
 	}
 }
 
 // frame format [W][cmd*W][R] W=写命令字节数(≥1)；R=期望读回字节数(0=只写)
-void passthrough(void) {
-	//PROJ_FUNC_ENTER;
+void passthrough(void)
+{
+	// PROJ_FUNC_ENTER;
 	int8_t ret = 0;
 	uint8_t w_len = 0;
 	uint8_t r_len = 0;
 	uint16_t len = USART1_STA & 0x3FFF;
-	static uint8_t cmd_buf[PASSTHROUGH_RX_MAX] = {0};   //cmd copy
-	static uint8_t rx_buf[PASSTHROUGH_RX_MAX] = {0};	//recv data
+	static uint8_t cmd_buf[PASSTHROUGH_RX_MAX] = {0}; // cmd copy
+	static uint8_t rx_buf[PASSTHROUGH_RX_MAX] = {0};  // recv data
 	uint8_t err[] = {0xFF, 0xFF};
 	uint8_t ack[] = {0x00};
 
-	if (!(USART1_STA & 0X8000)) {  //not full frame
-		//LOG_DEBUG("not full frame");
+	if (!(USART1_STA & 0X8000))
+	{ // not full frame
+		// LOG_DEBUG("not full frame");
 		return;
 	}
 
-	//parsing frame : [W][cmd*W][R]
-	if (len < 3) { //empty frame
+	// parsing frame : [W][cmd*W][R]
+	if (len < 3)
+	{ // empty frame
 		USART1_STA = 0;
 		return;
 	}
 
 	w_len = USART1_REC[0];
 	r_len = USART1_REC[len - 1];
-	if ((w_len == 0) || ((w_len + 2) != len) || (r_len > PASSTHROUGH_RX_MAX)) {
-		//usart1_send_data(err, 2);
+	if ((w_len == 0) || ((w_len + 2) != len) || (r_len > PASSTHROUGH_RX_MAX))
+	{
+		// usart1_send_data(err, 2);
 		LOG_ERROR("cmd error!!!");
 		usart1_send_data_hex(err, 2);
 		USART1_STA = 0;
 		return;
 	}
-	
-	memcpy(cmd_buf, &USART1_REC[1], w_len);  //copy,prevent receiving interruptions from being overwritten
-	USART1_STA = 0;  //allow recv
-	
-	for (uint8_t i = 0; i < w_len; i++) {
+
+	memcpy(cmd_buf, &USART1_REC[1], w_len); // copy,prevent receiving interruptions from being overwritten
+	USART1_STA = 0;							// allow recv
+
+	for (uint8_t i = 0; i < w_len; i++)
+	{
 		LOG_DEBUG("w_len:%d, cmd[%d]:%x", w_len, i, cmd_buf[i]);
 	}
 
@@ -90,58 +98,69 @@ void passthrough(void) {
 	NVIC_DisableIRQ(EXTI4_IRQn);
 
 	i2c_device hyn_dev = {
-		.dev_addr_w = 0x70,				//test addr,actual usage substitution
-		.dev_addr_r = 0x70 | 0x01,		//test addr,actual usage substitution
+		.dev_addr_w = 0x70,		   // test addr,actual usage substitution
+		.dev_addr_r = 0x70 | 0x01, // test addr,actual usage substitution
 		.cmd = cmd_buf,
 		.cmd_len = w_len,
 		.pdata = rx_buf,
 		.data_len = r_len,
 	};
 
-	if (r_len == 0) { //only write
+	if (r_len == 0)
+	{ // only write
 		ret = sys_i2c_write(I2C1, &hyn_dev);
 	}
-	else {
+	else
+	{
 		ret = sys_i2c_write_read(I2C1, &hyn_dev);
 	}
 
 	NVIC_EnableIRQ(EXTI4_IRQn);
 
-	if (ret) {
+	if (ret)
+	{
 		usart1_send_data_hex(err, 2);
 	}
-	else if (r_len == 0) {
+	else if (r_len == 0)
+	{
 		usart1_send_data_hex(ack, 1);
 	}
-	else { // callback read data
+	else
+	{ // callback read data
 		usart1_send_data_hex(rx_buf, r_len);
 	}
-	
-	//PROJ_FUNC_EXIT;
-}
 
+	// PROJ_FUNC_EXIT;
+}
 
 int main(void)
 {
 
 	uint16_t key_sta1;
-//	uint16_t key_sta2;
-//	uint16_t w25qxx_chipid = 0;
-//	uint8_t mpu_6050_id = 0;
+	//	uint16_t key_sta2;
+	//	uint16_t w25qxx_chipid = 0;
+	//	uint8_t mpu_6050_id = 0;
 
 	init_system();
-	
+
 	module_init();
 	sdk_motion_init();
 
-	oled_clear();
-	menu_init();
-	oled_update();
+	// oled_clear();
+	// oled_showchar(0, 0, 8, 16,'A');
+	// oled_showchar(0, 20, 8, 16,'b');
+	// oled_show_string(0, 20, 8, 16, "hello world");
+	// oled_show_chinese(0, 20, 16, 16, "田海超");
+	// oled_show_img(0,0,128,64,dog_128x64);
+	// menu_init();
+	mod_u8g2_init();
+	// oled_update();
 
-	while(1) {
-		key_sta1 = sys_key_mes_disp(&g_key1);
-//		key_sta2 = sys_key_mes_disp(&g_key2);
-
+	while (1)
+	{
+		// key_sta1 = sys_key_mes_disp(&g_key1);
+		//		key_sta2 = sys_key_mes_disp(&g_key2);
+		
 		// switch(key_sta1){
 		// 	case KEY_DOWN:
 		// 		led_control(GPIOB, gpio_pin_5, LED_ON);

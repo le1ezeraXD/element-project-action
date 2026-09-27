@@ -2,14 +2,16 @@
 #define __OLED_FONT_H
 #include <stdint.h>
 
-/*OLED字模库，宽8像素，高16像素*/
+/*OLED字模库，�?8像素，高16像素*/
 extern const uint8_t oled_font_8x16[][16];
-/*OLED显示图像库*/
+/*OLED显示图像�?*/
+
 extern const uint8_t oled_img[];
+extern const uint8_t dog_128x64[]; 
 
 
 typedef struct {
-	char index[3];    //GB2312 一个汉字是两个字节,再加上'\0'
+	char index[3];    //GB2312 一�?汉字�?两个字节,再加�?'\0'
 	uint8_t data[32];
 }chinese_t;
 
