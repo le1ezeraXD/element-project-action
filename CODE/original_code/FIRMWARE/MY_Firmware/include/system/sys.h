@@ -22,7 +22,7 @@
 /* 数学函数头文件 */
 #include <math.h>
 
-#define MY_DRIVER   0
+#define MY_DRIVER   1
 
 extern key_state_t g_key1, g_key2, g_key3;
 
