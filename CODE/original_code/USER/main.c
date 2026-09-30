@@ -147,41 +147,36 @@ int main(void)
 	sdk_motion_init();
 
 	// oled_clear();
-	// oled_showchar(0, 0, 8, 16,'A');
-	// oled_showchar(0, 20, 8, 16,'b');
-	// oled_show_string(0, 20, 8, 16, "hello world");
-	// oled_show_chinese(0, 20, 16, 16, "Ìïº£³¬");
-	// oled_show_img(0,0,128,64,dog_128x64);
 	// menu_init();
 	mod_u8g2_init();
 	// oled_update();
 
 	while (1)
 	{
-		// key_sta1 = sys_key_mes_disp(&g_key1);
-		//		key_sta2 = sys_key_mes_disp(&g_key2);
+		key_sta1 = sys_key_mes_disp(&g_key1);
+				key_sta2 = sys_key_mes_disp(&g_key2);
 		
-		// switch(key_sta1){
-		// 	case KEY_DOWN:
-		// 		led_control(GPIOB, gpio_pin_5, LED_ON);
-		// 		menu_enter();
-		// 		oled_update();
-		// 		// g_encoder_dev.encoder_reset = 1;
-		// 		break;
-		// 	case KEY_UP:
-		// 		led_control(GPIOB, gpio_pin_5, LED_OFF);
-		// 		break;
-		// 	case KEY_LONG_PRESS:
-		// 		menu_back();
-		// 		oled_update();
-		// 		// led_control(GPIOB, gpio_pin_5, LED_ON);
-		// 		// g_encoder_dev.encoder_reset = 0;
-		// 		// TIM_Cmd(TIM3,ENABLE);
-		// 		break;
-		// 	default:
-		// 		// menu_encoder_process();
-		// 		oled_update();
-		// 		break;
-		// }
+		switch(key_sta1){
+			case KEY_DOWN:
+				led_control(GPIOB, gpio_pin_5, LED_ON);
+				menu_enter();
+				oled_update();
+				// g_encoder_dev.encoder_reset = 1;
+				break;
+			case KEY_UP:
+				led_control(GPIOB, gpio_pin_5, LED_OFF);
+				break;
+			case KEY_LONG_PRESS:
+				menu_back();
+				oled_update();
+				// led_control(GPIOB, gpio_pin_5, LED_ON);
+				// g_encoder_dev.encoder_reset = 0;
+				// TIM_Cmd(TIM3,ENABLE);
+				break;
+			default:
+				// menu_encoder_process();
+				oled_update();
+				break;
+		}
 	}
 }

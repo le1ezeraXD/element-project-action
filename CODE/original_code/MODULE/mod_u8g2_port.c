@@ -113,8 +113,8 @@ uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, vo
 	return 1;
 }
 
-// void draw_cat(void);
-// void draw_dog(void);
+void draw_cat(void);
+void draw_dog(void);
 // void dog_normal(void);
 // void dog_hello(void);
 
