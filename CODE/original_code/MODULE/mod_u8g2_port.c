@@ -87,10 +87,8 @@ uint8_t u8x8_byte_stm32_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *ar
   * @param  arg_ptr  : message argument
   * @retval 1 success, 0 fail
   */
-uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
-{
-	switch (msg)
-	{
+uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
+	switch (msg) {
 		case U8X8_MSG_GPIO_AND_DELAY_INIT:
 			/* nothing to init, gpio for the oled is handled elsewhere */
 			break;
@@ -115,13 +113,10 @@ uint8_t u8x8_gpio_and_delay_stm32(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, vo
 	return 1;
 }
 
-void draw_cat(void);
-void draw_dog(void);
-void dog_normal(void);
-void dog_hello(void);
-
-
-
+// void draw_cat(void);
+// void draw_dog(void);
+// void dog_normal(void);
+// void dog_hello(void);
 
 void oled_show_cat(void) {
 	u8g2_ClearBuffer(&u8g2);
@@ -143,8 +138,7 @@ void oled_show_dog(void) {
   * @retval None
   * @note   调用前需先 u8g2_ClearBuffer(), 调用后 u8g2_SendBuffer()
   */
-void draw_cat(void)
-{
+void draw_cat(void) {
     /* 脸: 圆心(64,42) 半径22 的大圆 */
     u8g2_DrawCircle(&u8g2, 64, 42, 22, U8G2_DRAW_ALL);
 
@@ -176,8 +170,7 @@ void draw_cat(void)
   * @retval None
   * @note   调用前需先 u8g2_ClearBuffer(), 调用后 u8g2_SendBuffer()
   */
-void draw_dog(void)
-{
+void draw_dog(void) {
     /* 头: 圆心(64,40) 半径22 的大圆 */
     u8g2_DrawCircle(&u8g2, 64, 40, 22, U8G2_DRAW_ALL);
 
@@ -202,6 +195,25 @@ void draw_dog(void)
     u8g2_DrawDisc(&u8g2, 64, 58, 2, U8G2_DRAW_ALL);
 }
 
+static int isqrt(int n) {
+    if (n <= 0) return 0;
+    int x = n;
+    int y = (x + 1) / 2;
+    while (y < x) {
+        x = y;
+        y = (x + n / x) / 2;
+    }
+    return x;
+}
+
+void drawFilledEllipse(u8g2_t *u8g2, int cx, int cy, int xa, int yb) {//cx cy 椭圆中心 xa:水平半轴 yb:垂直轴
+    int b2 = yb * yb;
+    for (int y = -yb; y <= yb; y++) {
+        int dx = (xa * isqrt(b2 - y * y) + yb / 2) / yb; // 四舍五入
+        u8g2_DrawHLine(u8g2, cx - dx, cy + y, 2 * dx + 1);
+    }
+}
+
 void dog_normal(void) {
 	u8g2_ClearBuffer(&u8g2);
     /* 左眼睛： */
@@ -217,26 +229,8 @@ void dog_normal(void) {
     u8g2_DrawLine(&u8g2, 79, 52, 86, 47);
     u8g2_DrawLine(&u8g2, 86, 47, 86, 37);
 	u8g2_DrawLine(&u8g2, 86, 37, 42, 37);
+
 	u8g2_SendBuffer(&u8g2);
-}
-
-static int isqrt(int n) {
-    if (n <= 0) return 0;
-    int x = n;
-    int y = (x + 1) / 2;
-    while (y < x) {
-        x = y;
-        y = (x + n / x) / 2;
-    }
-    return x;
-}
-
-void drawFilledEllipse(u8g2_t *u8g2, int cx, int cy, int xa, int yb) {//cx cy 椭圆中心 xa:水平半轴 yb:垂直轴{
-    int b2 = yb * yb;
-    for (int y = -yb; y <= yb; y++) {
-        int dx = (xa * isqrt(b2 - y * y) + yb / 2) / yb; // 四舍五入
-        u8g2_DrawHLine(u8g2, cx - dx, cy + y, 2 * dx + 1);
-    }
 }
 
 void dog_hello(void) {
@@ -258,7 +252,7 @@ void dog_forward(void) {
 	u8g2_DrawLine(&u8g2, 74, 52, 54, 52);
 	u8g2_DrawLine(&u8g2, 54, 52, 54, 42);
 	u8g2_DrawLine(&u8g2, 54, 42, 59, 45);
-		u8g2_DrawLine(&u8g2, 59, 45, 64, 40);
+	u8g2_DrawLine(&u8g2, 59, 45, 64, 40);
 	u8g2_SendBuffer(&u8g2);
 }
 
@@ -299,17 +293,13 @@ void mod_u8g2_init(void) {
 	/* 1.3" oled uses SH1106 controller (132-col GRAM, visible 128),
 	 * which handles the 2-column offset internally. SSD1306 setup here
 	 * would leave a stray vertical line at the right edge. */
-	u8g2_Setup_sh1106_i2c_128x64_noname_f(
-		&u8g2, U8G2_R0,
-		u8x8_byte_stm32_i2c,
-		u8x8_gpio_and_delay_stm32);
-
+	u8g2_Setup_sh1106_i2c_128x64_noname_f(&u8g2, U8G2_R0, u8x8_byte_stm32_i2c, u8x8_gpio_and_delay_stm32);
 	u8x8_SetI2CAddress(&u8g2.u8x8, OLED_ADDR_WD);
-
 	u8g2_InitDisplay(&u8g2);
 	u8g2_SetPowerSave(&u8g2, 0);   /* 0 = display on */
+
 	u8g2_ClearBuffer(&u8g2);
     delay_ms(1000);
-	dog_wag_tail();
+	dog_forward();
 	u8g2_SendBuffer(&u8g2);
 }
