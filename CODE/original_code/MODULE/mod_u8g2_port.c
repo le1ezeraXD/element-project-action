@@ -7,7 +7,7 @@
 /**
   ******************************************************************************
   * @file    mod_u8g2_port.c
-  * @author  (port)
+  * @author  thc
   * @brief   u8g2 lib port - i2c byte/gpio callback for SSD1306/SH1106 (128x64)
   ******************************************************************************
   * u8g2:      8bit graphics lib
@@ -37,10 +37,8 @@ static uint8_t u8x8_tx_cnt = 0;
   * @param  arg_ptr  : message argument (data pointer etc.)
   * @retval 1 success, 0 fail
   */
-uint8_t u8x8_byte_stm32_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
-{
-	switch (msg)
-	{
+uint8_t u8x8_byte_stm32_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
+	switch (msg) {
 		case U8X8_MSG_BYTE_INIT:
 			/* I2C bus already initialized by mod_oled_init(), do nothing here */
 			u8x8_tx_cnt = 0;
@@ -53,8 +51,7 @@ uint8_t u8x8_byte_stm32_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *ar
 
 		case U8X8_MSG_BYTE_SEND:
 			/* u8x8 sends data in chunks, accumulate them first */
-			if (u8x8_tx_cnt + arg_int <= sizeof(u8x8_tx_buf))
-			{
+			if (u8x8_tx_cnt + arg_int <= sizeof(u8x8_tx_buf)) {
 				memcpy(&u8x8_tx_buf[u8x8_tx_cnt], arg_ptr, arg_int);
 				u8x8_tx_cnt += arg_int;
 			}
@@ -63,8 +60,7 @@ uint8_t u8x8_byte_stm32_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *ar
 		case U8X8_MSG_BYTE_END_TRANSFER:
 		{
 			/* one transfer = ctrl byte + payload, send via i2c in one go */
-			if (u8x8_tx_cnt >= 1)
-			{
+			if (u8x8_tx_cnt >= 1) {
 				i2c_device dev = {
 					.dev_addr_w = OLED_ADDR_WD,
 					.reg_addr   = u8x8_tx_buf[0],      /* 0x00 command / 0x40 data */
@@ -207,6 +203,7 @@ void draw_dog(void)
 }
 
 void dog_normal(void) {
+	u8g2_ClearBuffer(&u8g2);
     /* ×óÑÛ¾¦£º */
     u8g2_DrawBox(&u8g2, 12, 12, 40, 10);
 
@@ -220,6 +217,7 @@ void dog_normal(void) {
     u8g2_DrawLine(&u8g2, 79, 52, 86, 47);
     u8g2_DrawLine(&u8g2, 86, 47, 86, 37);
 	u8g2_DrawLine(&u8g2, 86, 37, 42, 37);
+	u8g2_SendBuffer(&u8g2);
 }
 
 static int isqrt(int n) {
@@ -242,11 +240,14 @@ void drawFilledEllipse(u8g2_t *u8g2, int cx, int cy, int xa, int yb) {//cx cy ÍÖ
 }
 
 void dog_hello(void) {
+	u8g2_ClearBuffer(&u8g2);
 	drawFilledEllipse(&u8g2, 34, 32, 15, 20);
 	drawFilledEllipse(&u8g2, 94, 32, 15, 20);
+	u8g2_SendBuffer(&u8g2);
 }
 
 void dog_forward(void) {
+	u8g2_ClearBuffer(&u8g2);
 	//ÑÛ¾¦
 	u8g2_DrawTriangle(&u8g2, 10, 20, 20, 10, 60, 30);
 	u8g2_DrawTriangle(&u8g2, 118, 20, 108, 10, 68, 30);
@@ -257,11 +258,13 @@ void dog_forward(void) {
 	u8g2_DrawLine(&u8g2, 74, 52, 54, 52);
 	u8g2_DrawLine(&u8g2, 54, 52, 54, 42);
 	u8g2_DrawLine(&u8g2, 54, 42, 59, 45);
-	u8g2_DrawLine(&u8g2, 59, 45, 64, 40);
+		u8g2_DrawLine(&u8g2, 59, 45, 64, 40);
+	u8g2_SendBuffer(&u8g2);
 }
 
 void dog_wag_tail(void) {
 	// ÖÐÐÄ (64, 32)£¬Íâ°ë¾¶ 30£¬ÄÚ°ë¾¶ 20
+	u8g2_ClearBuffer(&u8g2);
 	u8g2_SetDrawColor(&u8g2, 1);                       // Ç°¾°É«£¬»­°×µã
 	u8g2_DrawDisc(&u8g2, 32, 22, 18, U8G2_DRAW_ALL);   // ÍâÔ²ÊµÐÄ
 	u8g2_SetDrawColor(&u8g2, 0);                       // ±³¾°É«£¬²Á³ý
@@ -282,6 +285,8 @@ void dog_wag_tail(void) {
 	u8g2_SetDrawColor(&u8g2, 0);
 	u8g2_DrawBox(&u8g2, 58 - 6, 50 - 6, 32, 6);      
 	u8g2_SetDrawColor(&u8g2, 1);
+	u8g2_SendBuffer(&u8g2);
+
 }
 /**
   * @brief  init u8g2 for ssd1306 128x64 i2c
@@ -291,7 +296,10 @@ void dog_wag_tail(void) {
   *         u8g2_Setup_sh1106_i2c_128x64_noname_f(...)
   */
 void mod_u8g2_init(void) {
-	u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+	/* 1.3" oled uses SH1106 controller (132-col GRAM, visible 128),
+	 * which handles the 2-column offset internally. SSD1306 setup here
+	 * would leave a stray vertical line at the right edge. */
+	u8g2_Setup_sh1106_i2c_128x64_noname_f(
 		&u8g2, U8G2_R0,
 		u8x8_byte_stm32_i2c,
 		u8x8_gpio_and_delay_stm32);
