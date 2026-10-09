@@ -297,9 +297,8 @@ void mod_u8g2_init(void) {
 	u8x8_SetI2CAddress(&u8g2.u8x8, OLED_ADDR_WD);
 	u8g2_InitDisplay(&u8g2);
 	u8g2_SetPowerSave(&u8g2, 0);   /* 0 = display on */
-
 	u8g2_ClearBuffer(&u8g2);
     delay_ms(1000);
-	dog_forward();
+	dog_wag_tail();
 	u8g2_SendBuffer(&u8g2);
 }

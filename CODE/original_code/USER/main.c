@@ -137,7 +137,7 @@ int main(void)
 {
 
 	uint16_t key_sta1;
-	//	uint16_t key_sta2;
+	uint16_t key_sta2;
 	//	uint16_t w25qxx_chipid = 0;
 	//	uint8_t mpu_6050_id = 0;
 
@@ -154,7 +154,7 @@ int main(void)
 	while (1)
 	{
 		key_sta1 = sys_key_mes_disp(&g_key1);
-				key_sta2 = sys_key_mes_disp(&g_key2);
+		key_sta2 = sys_key_mes_disp(&g_key2);
 		
 		switch(key_sta1){
 			case KEY_DOWN:
