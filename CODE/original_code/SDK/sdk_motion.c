@@ -22,6 +22,12 @@
 
 #define LEG_NUM           4
 
+//行走配置
+#define SWING_CENTER_ANGLE	90.0f	//围绕的中心角度，范围：0~180
+#define SWING_AMPLITUDE		45.0f	//摆动范围（单侧最大偏离中心的角度），范围：0~min(中心角度, 180-中心角度)
+#define SWING_PERIOD_MS		1000	//摆动时间（来回一个周期的时间），单位：ms，取10的整数倍
+#define SWING_DURATION_MS	5000	//摆动总时长（到达后自动停止摆动），单位：ms，取10的整数倍
+
 typedef enum {
     MOTION_ST_STAND = 0,   //站立
     MOTION_ST_WALK,        //行走
@@ -143,5 +149,56 @@ void motion_tick(void) {
         if (motion_.cur_angle[i] > MAX_ANGLE) motion_.cur_angle[i] = MAX_ANGLE;
 
         servo_set_angle(motion_.ch[i], motion_.cur_angle[i]);
+    }
+}
+void motion_walk_(void) {
+    uint16_t StepDelay = 10;					//每一步的延时，单位：ms
+    uint16_t CycleSteps = SWING_PERIOD_MS / StepDelay;	//一个摆动周期内的步数
+    uint16_t TotalSteps = SWING_DURATION_MS / StepDelay;	//摆动总时长内的总步数
+    if (CycleSteps == 0)					//防止摆动周期配置过小
+    {
+        CycleSteps = 1;
+    }
+    if (SWING_DURATION_MS == 0)				//摆动总时长配置为0，则一直摆动，直到按键2退出
+    {
+        TotalSteps = 65535;					//总步数设为最大，近似无限
+    }
+    for (uint16_t i = 0; i < TotalSteps; i++)		//遍历摆动总时长内的每一步
+    {
+        /*用正弦波计算当前步的角度：一个周期内，中心角→最大角→中心角→最小角→中心角*/
+        float Phase = (float)(i % CycleSteps) / CycleSteps;	//当前步在一个周期内的相位，范围：0~1
+        float Wave = sinf(2 * 3.1415926f * Phase);			//正弦波数值，范围：-1~+1
+        float SwingAngle = SWING_CENTER_ANGLE + SWING_AMPLITUDE * Wave;	//计算当前摆动角度
+        
+        //TODO
+        for (uint8_t ch = 1; ch < 5; ch++) {
+            servo_set_angle(ch, SwingAngle);			//设置舵机的角度为当前摆动角度
+        }
+
+//        Delay_ms(StepDelay);				//延时一步
+    }
+}
+void motion_set_target(void) {
+    switch(motion_.state) {
+        case MOTION_ST_STAND:
+            for (uint8_t ch = 1; ch < 5; ch++) {
+                servo_set_angle(ch, STAND_ANGLE);
+            }
+            break;
+        case MOTION_ST_CROUCH:
+            servo_set_angle(1, CROUCH_ANGLE_F);
+            servo_set_angle(2, CROUCH_ANGLE_F);
+            servo_set_angle(3, CROUCH_ANGLE_R);
+            servo_set_angle(4, CROUCH_ANGLE_R);
+            break;
+        case MOTION_ST_LIE:
+            servo_set_angle(1, LIE_ANGLE_F);
+            servo_set_angle(2, LIE_ANGLE_F);
+            servo_set_angle(3, LIE_ANGLE_R);
+            servo_set_angle(4, LIE_ANGLE_R);
+            break;
+        case MOTION_ST_WALK:
+            motion_walk_();
+            break;
     }
 }

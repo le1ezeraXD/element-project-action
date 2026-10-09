@@ -1,5 +1,5 @@
 #include "drv_usart1.h"
-
+#include "sys_servo.h"
 
 #pragma import(__use_no_semihosting)
 
@@ -32,65 +32,6 @@ int fputc(int ch, FILE *f) {
   * @retval None
   */
 void drv_usart1_Init(uint32_t bound) {
-	
-#if MY_DRIVER
-	uint32_t apb2_clk = 72000000; 
-  uint32_t usart_div = (apb2_clk + bound / 2) / bound;  // 四舍五入
-	//1、使能时钟
-	//使能GPIOA时钟
-	RCC->APB2ENR |=(1<<2);
-	//使能AFIO时钟
-	RCC->APB2ENR |=(1<<0);
-	//使能USART1时钟
-	RCC->APB2ENR |=(1<<14);
-	
-	//2、初始化GPIO
-	//MODE  11   CNFY  10   [7:4]   1011  0X0B;
-	//PA9为复用推挽输出模式
-	GPIOA->CRH &=~(0x0F<<4);  //先清零
-	GPIOA->CRH |= (0x0B<<4);  //复用推挽输出模式
-	
-	//PA10为浮空输入
-	//MODE 00  CNFY  01   [11:8]  0100  0x04
-	GPIOA->CRH &=~(0x0F<<8);  //先清零
-	GPIOA->CRH |= (0x04<<8);  //浮空输入
-	
-	//3、初始化USART1
-	//3.1设置波特率
-  USART1->BRR = (usart_div / 16) << 4 | (usart_div % 16);
-	//3.2设置校验位
-	USART1->CR1 &= ~(1<<10);     	  //不使用校验位
-	//3.3数据位
-	USART1->CR1 &= ~(1<<12);     	  //设置8位长度
-	//3.4停止位
-	USART1->CR2 &= ~(0x02<<12);  	  // 一个停止位
-	
-	//4、使能
-	//使能发送  TE位
-	USART1->CR1 |=(1<<3);
-	//使能接收  RE位
-	USART1->CR1 |=(1<<2);
-	//串口使能  使能USART模块  UE位
-	USART1->CR1 |=(1<<13);
-
-	//配置数据接收需要用到中断
-	//5、NVIC 使用NVIC去配置溢出中断
-	//1、设置中断优先级分组   设置为101  ----   5  主4  子4
-	//SCB->AIRCR  |=(0x05<<8);
-	NVIC_SetPriorityGrouping(5);
-	
-	//2、设置使能USART1全局中断
-	NVIC_EnableIRQ(USART1_IRQn);   //中断向量
-	
-	//3、设置中断优先级  1010  主优先级为2，子优先级2
-	NVIC_SetPriority (USART1_IRQn, 10);
-	
-	
-	//6、使能接收数据中断寄存器
-	USART1->CR1 |= (1<<5);  //RXNEIE  数据接收中断
-	USART1->CR1 |= (1<<4);  //IDLEIE  总线空闲中断
-
-#else
 	GPIO_InitTypeDef  GPIO_InitStruct;
 	USART_InitTypeDef  USART_InitStruct;
 	NVIC_InitTypeDef  NVIC_InitStruct;
@@ -153,8 +94,6 @@ void drv_usart1_Init(uint32_t bound) {
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x02;
 	//NVIC的初始化
 	NVIC_Init(&NVIC_InitStruct);
-	
-#endif
 }
 
 
@@ -175,9 +114,3 @@ void usart1_send_data(const char *data, uint8_t len) {
 		USART1->DR = (uint8_t)data[i];
 	}
 }
-
-
-
-
-
-

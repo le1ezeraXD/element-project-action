@@ -13,6 +13,7 @@
 #include "sys_key.h"
 #include "sys_i2c.h"
 #include "sys_encoder.h"
+#include "sys_servo.h"
 
 /* driver include */
 #include "drv_led.h"
@@ -26,6 +27,8 @@
 
 /* irq_handler */
 #include "irq_handler.h"
+
+#include "Key.h"
 
 //全局设备变量
 uint8_t g_mpu6050_data_ready;
@@ -119,7 +122,8 @@ void passthrough(void) {
 	//PROJ_FUNC_EXIT;
 }
 
-
+uint8_t KeyNum;
+float Angle = 0;
 int main(void) {
 	
 	uint16_t key_sta1;
@@ -128,17 +132,41 @@ int main(void) {
 //	uint8_t mpu_6050_id = 0;
 
 	init_system();
-	
-	module_init();
+	Key_Init();
+//	module_init();
 	sdk_motion_init();
 
-	oled_clear();
-	menu_init();
-	oled_update();
-
+//	oled_clear();
+//	menu_init();
+//	oled_update();
+    #if 1
+    while (1) {
+        if (!(USART1_STA & 0X8000)) {
+            if (USART1_REC[0] == STAND) {
+                set_stand();
+            }
+            else if (USART1_REC[0] == CROUCH) {
+                set_crouch();
+            }
+            else if (USART1_REC[0] == LIE_DOWN) {
+                set_lie_down();
+            }
+            else if (USART1_REC[0] == FORWARD) {
+                set_walk(WALK_FORWARD);
+            }
+            else if (USART1_REC[0] == BACKWARD) {
+                set_walk(WALK_BACKWARD);
+            }
+            USART1_REC[0] = 0;
+            USART1_STA &= ~0X8000;
+        }
+        motion_set_target();
+    }
+    #endif
+    #if 0
 	while(1) {
 		key_sta1 = sys_key_mes_disp(&g_key1);
-//		key_sta2 = sys_key_mes_disp(&g_key2);
+		key_sta2 = sys_key_mes_disp(&g_key2);
 
 		switch(key_sta1){
 			case KEY_DOWN:
@@ -163,5 +191,6 @@ int main(void) {
 				break;
 		}
 	}
+    #endif
 }
 

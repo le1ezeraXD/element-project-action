@@ -116,16 +116,16 @@ void drv_tim8_set_duty(uint8_t channel, uint16_t duty) {
 }
 
 void pwm_init(uint8_t init_angle) {
-    //1. GPIO初始化
+    //1. 开启时钟
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    
+    //2. GPIO初始化
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, & GPIO_InitStructure);
-    
-    //2. 开启时钟
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     
 	// 3. 配置定时器基本参数
     // 72MHz / 72 = 1MHz计数频率（周期1us）
@@ -141,7 +141,7 @@ void pwm_init(uint8_t init_angle) {
     TIM_OCInitTypeDef TIM_OCInitStructure;
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = init_angle;      //90°
+    TIM_OCInitStructure.TIM_Pulse = 0;      //90°
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
     TIM_OC1Init(TIM2, &TIM_OCInitStructure);

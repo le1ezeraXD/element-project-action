@@ -43,7 +43,6 @@ void TIM4_IRQHandler(void) {
 		// 	sys_reset_encoder_count(TIM3, &g_encoder_dev);
 		// }
 		menu_encoder_process();
-		motion_tick();
 		// oled_update();
 		// sys_encoder_speed(TIM3, &g_encoder_dev);
 

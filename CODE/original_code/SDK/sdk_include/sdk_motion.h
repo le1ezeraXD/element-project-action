@@ -2,6 +2,12 @@
 #define __SDK_MOTION_H
 #include "sys.h"
 
+#define STAND      0x11
+#define CROUCH     0x22
+#define LIE_DOWN   0x33
+#define FORWARD    0x44
+#define BACKWARD   0x55
+
 /**
   * @brief 行走方向
   */
@@ -21,26 +27,26 @@ void sdk_motion_init(void);
   * @brief  站立
   * @retval None
   */
-void sdk_motion_stand(void);
+void set_stand(void);
 
 /**
   * @brief  开始行走
   * @param  dir 行走方向：MOTION_WALK_FORWARD 前进 / MOTION_WALK_BACKWARD 后退
   * @retval None
   */
-void sdk_motion_walk(motion_dir_t dir);
+void set_walk(motion_dir_t dir);
 
 /**
   * @brief  蹲下
   * @retval None
   */
-void sdk_motion_crouch(void);
+void set_crouch(void);
 
 /**
   * @brief  趴下
   * @retval None
   */
-void sdk_motion_lie_down(void);
+void set_lie_down(void);
 
 /**
   * @brief  运动节拍：5ms 周期调用一次（挂在 TIM4 中断里）
@@ -48,5 +54,7 @@ void sdk_motion_lie_down(void);
   * @retval None
   */
 void motion_tick(void);
+
+void motion_set_target(void);
 
 #endif
