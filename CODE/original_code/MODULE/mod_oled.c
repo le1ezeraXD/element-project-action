@@ -259,7 +259,7 @@ void oled_show_img(uint8_t x, uint8_t y, uint8_t width, uint8_t hight, const uin
 
 /**
   * @brief  oled显示一个字符
-  * @param  X 指定图像左上角的横坐标，屏幕区域：0~127
+  * @param  X 指定图 像左上角的横坐标，屏幕区域：0~127
   * @param  Y 指定图像左上角的纵坐标，屏幕区域：0~63
   * @param  width 字符宽度  默认8
   * @param  hight 字符高度  默认16
@@ -269,9 +269,8 @@ void oled_show_img(uint8_t x, uint8_t y, uint8_t width, uint8_t hight, const uin
 void oled_showchar(uint8_t x, uint8_t y, uint8_t width, uint8_t hight, char char_data) {      	
 	// 计算字符在字模库中的索引
 	uint8_t char_index = char_data - ' ';  //字模库从空格开始
-
-  	// oled_display_buffer[x][y] = oled_font_8x16[char_index][i];
-  	oled_show_img(x, y, width, hight, oled_font_8x16[char_index]);
+  // oled_display_buffer[x][y] = oled_font_8x16[char_index][i];
+  oled_show_img(x, y, width, hight, oled_font_8x16[char_index]);
 }
 
 /**
