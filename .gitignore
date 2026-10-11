@@ -1,7 +1,7 @@
 *.d
 *.o
 *.crf
-# USERÄ¿Â¼£ºÖ»¸ú×Ùc/h/uvprojx£¬USERÏÂÆäËûÎÄ¼þºöÂÔ
+# USERÄ¿Â¼ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½c/h/uvprojxï¿½ï¿½USERï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 CODE/original_code/USER/
 !CODE/original_code/USER/
 CODE/original_code/USER/**/*
@@ -10,7 +10,7 @@ CODE/original_code/USER/**/*
 !CODE/original_code/USER/**/*.h
 !CODE/original_code/USER/**/*.uvprojx
 
-# ========== ÐÂÔö£ºKeil±àÒë²úÎï ==========
+# ========== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Keilï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==========
 CODE/original_code/OBJ/
 *.hex
 *.axf
@@ -20,6 +20,16 @@ CODE/original_code/OBJ/
 *.dep
 *.build_log.htm
 
-# Keil¸öÈË´°¿ÚÅäÖÃ
+# Keilï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 *.uvoptx
 *.uvopt
+
+# ESP-IDF generated files
+/build/
+/sdkconfig
+/sdkconfig.old
+
+# Local environment
+.env
+.env.*
+!.env.example

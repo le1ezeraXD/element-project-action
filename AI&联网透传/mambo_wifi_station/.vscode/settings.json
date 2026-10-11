@@ -1,0 +1,33 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.extensionActivationMode": "always",
+  "cmake.configureOnOpen": false,
+  "cmake.configureOnEdit": false,
+  "cmake.automaticReconfigure": false,
+  "cmake.autoSelectActiveFolder": false,
+  "cmake.options.advanced": {
+    "build": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "hidden"
+    },
+    "launch": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "hidden"
+    },
+    "debug": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "hidden"
+    }
+  },
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "idf.port": "detect",
+  "idf.currentSetup": "D:\\esp\\v6.1\\esp-idf",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32",
+    "IDF_PATH": "D:\\esp\\v6.1\\esp-idf",
+    "IDF_TOOLS_PATH": "D:\\esp\\v6.1\\tools",
+    "IDF_PYTHON_ENV_PATH": "D:\\esp\\v6.1\\tools\\python\\v6.1\\venv"
+  }
+}
