@@ -1,7 +1,7 @@
 *.d
 *.o
 *.crf
-# USER åªè·Ÿè¸ªæºç (.c/.h)å’Œ Keil å·¥ç¨‹æ–‡ä»¶(.uvprojx)ï¼Œå…¶ä½™å¿½ç•¥
+# USERÄ¿Â¼£ºÖ»¸ú×Ùc/h/uvprojx£¬USERÏÂÆäËûÎÄ¼şºöÂÔ
 CODE/original_code/USER/
 !CODE/original_code/USER/
 CODE/original_code/USER/**/*
@@ -9,3 +9,17 @@ CODE/original_code/USER/**/*
 !CODE/original_code/USER/**/*.c
 !CODE/original_code/USER/**/*.h
 !CODE/original_code/USER/**/*.uvprojx
+
+# ========== ĞÂÔö£ºKeil±àÒë²úÎï ==========
+CODE/original_code/OBJ/
+*.hex
+*.axf
+*.lnp
+*.sct
+*.htm
+*.dep
+*.build_log.htm
+
+# Keil¸öÈË´°¿ÚÅäÖÃ
+*.uvoptx
+*.uvopt
