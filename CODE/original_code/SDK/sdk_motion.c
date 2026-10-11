@@ -1,6 +1,6 @@
 #include "sdk_motion.h"
 #include "sys_servo.h"
-
+#include "drv_systick.h"
 //站立角度
 #define STAND_ANGLE       90.0f
 //蹲下姿态：前腿/后腿角度
@@ -175,9 +175,14 @@ void motion_walk_(void) {
             servo_set_angle(ch, SwingAngle);			//设置舵机的角度为当前摆动角度
         }
 
-//        Delay_ms(StepDelay);				//延时一步
+        delay_ms(StepDelay);				//延时一步
+    }
+    
+    if (SWING_DURATION_MS != 0) {
+        set_stand();
     }
 }
+
 void motion_set_target(void) {
     switch(motion_.state) {
         case MOTION_ST_STAND:
