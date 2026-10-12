@@ -29,5 +29,6 @@
     "IDF_PATH": "D:\\esp\\v6.1\\esp-idf",
     "IDF_TOOLS_PATH": "D:\\esp\\v6.1\\tools",
     "IDF_PYTHON_ENV_PATH": "D:\\esp\\v6.1\\tools\\python\\v6.1\\venv"
-  }
+  },
+  "idf.flashType": "UART"
 }
