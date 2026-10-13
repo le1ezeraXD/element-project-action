@@ -23,3 +23,11 @@ CODE/original_code/OBJ/
 # Keil∏ˆ»À¥∞ø⁄≈‰÷√
 *.uvoptx
 *.uvopt
+
+# ESP-IDF generated files from the feature branch
+/AI_Network_Passthrough/mambo_wifi_station/build/
+/AI_Network_Passthrough/mambo_wifi_station/sdkconfig
+/AI_Network_Passthrough/mambo_wifi_station/sdkconfig.old
+
+# Local workspace settings generated at the repository root
+/.vscode/
