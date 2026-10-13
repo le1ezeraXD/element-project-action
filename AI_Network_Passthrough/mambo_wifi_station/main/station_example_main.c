@@ -15,6 +15,7 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "esp_http_client.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
@@ -162,6 +163,51 @@ void wifi_init_sta(void)
     }
 }
 
+static esp_err_t http_event_handler(esp_http_client_event_t *evt)
+{
+    if (evt->event_id == HTTP_EVENT_ON_DATA &&
+        evt->data != NULL &&
+        evt->data_len > 0) {
+        ESP_LOGI("HTTP_TEST", "Response: %.*s",
+                 evt->data_len, (const char *)evt->data);
+    }
+
+    return ESP_OK;
+}
+
+static void test_http_get(void)
+{
+    esp_http_client_config_t config = {
+        .url = "http://example.com/",
+        .event_handler = http_event_handler,
+        .timeout_ms = 10000,
+        .disable_auto_redirect = true,
+    };
+
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+
+    if (client == NULL) {
+        ESP_LOGE("HTTP_TEST", "Failed to init HTTP client");
+        return;
+    }
+
+    esp_http_client_set_method(client, HTTP_METHOD_GET);
+
+    ESP_LOGI("HTTP_TEST", "Sending HTTP GET...");
+
+    esp_err_t err = esp_http_client_perform(client);
+
+    if (err == ESP_OK) {
+        ESP_LOGI("HTTP_TEST", "HTTP Status = %d",
+                 esp_http_client_get_status_code(client));
+    } else {
+        ESP_LOGE("HTTP_TEST", "Request failed: %s",
+                 esp_err_to_name(err));
+    }
+
+    esp_http_client_cleanup(client);
+}
+
 void app_main(void)
 {
     //Initialize NVS
@@ -180,4 +226,5 @@ void app_main(void)
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
+    test_http_get();
 }
