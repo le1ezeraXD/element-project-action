@@ -28,6 +28,12 @@ CODE/original_code/OBJ/
 /build/
 /sdkconfig
 /sdkconfig.old
+/AI_Network_Passthrough/mambo_wifi_station/build/
+/AI_Network_Passthrough/mambo_wifi_station/sdkconfig
+/AI_Network_Passthrough/mambo_wifi_station/sdkconfig.old
+
+# Local workspace settings generated at the repository root
+/.vscode/
 
 # Local environment
 .env
