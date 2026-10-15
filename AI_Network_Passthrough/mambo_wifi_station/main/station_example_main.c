@@ -20,6 +20,9 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+#include <string.h>
+#include "esp_crt_bundle.h"
+
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -208,6 +211,57 @@ static void test_http_get(void)
     esp_http_client_cleanup(client);
 }
 
+
+
+static void test_http_post(void)
+{
+    const char *json_data =
+        "{\"device\":\"mambo_dog\","
+        "\"message\":\"Hello from ESP32-S3\"}";
+
+    esp_http_client_config_t config = {
+        .url = "https://echo.apifox.com/post",
+        .event_handler = http_event_handler,
+        .crt_bundle_attach = esp_crt_bundle_attach,
+        .timeout_ms = 15000,
+    };
+
+    esp_http_client_handle_t client =
+        esp_http_client_init(&config);
+
+    if (client == NULL) {
+        ESP_LOGE("HTTP_TEST", "HTTP client init failed");
+        return;
+    }
+
+    // 1. 设置 HTTP 请求方法
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+
+    // 2. 告诉服务器发送的是 JSON
+    esp_http_client_set_header(
+        client, "Content-Type", "application/json");
+
+    // 3. 设置 HTTP 请求体
+    esp_http_client_set_post_field(
+        client, json_data, strlen(json_data));
+
+    // 4. 发送请求并接收响应
+    ESP_LOGI("HTTP_TEST", "Sending HTTP POST...");
+
+    esp_err_t err = esp_http_client_perform(client);
+
+    if (err == ESP_OK) {
+        ESP_LOGI("HTTP_TEST", "HTTP Status = %d",
+                 esp_http_client_get_status_code(client));
+    } else {
+        ESP_LOGE("HTTP_TEST", "Request failed: %s",
+                 esp_err_to_name(err));
+    }
+
+    // 5. 释放资源
+    esp_http_client_cleanup(client);
+}
+
 void app_main(void)
 {
     //Initialize NVS
@@ -226,5 +280,5 @@ void app_main(void)
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
-    test_http_get();
+    test_http_post();
 }
